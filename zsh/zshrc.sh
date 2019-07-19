@@ -7,10 +7,15 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 
 # Setup plugins
-plugins=(git)
+plugins=(git gitfast)
 
 source $ZSH/oh-my-zsh.sh
 
-# Custom plugins
+# Additional plugins
 source $HOME/dotfiles/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $HOME/dotfiles/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Custom aliases/keybindings/functions
+source $HOME/dotfiles/zsh/aliases.sh
+source $HOME/dotfiles/zsh/aliases-sm.sh
+source $HOME/dotfiles/zsh/functions.sh
