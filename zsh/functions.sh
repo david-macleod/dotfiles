@@ -8,3 +8,11 @@ hi () {
 	   echo "Usage: hi <substring>" >&2
    fi
 }
+
+qcat () {
+  if [ "$#" -eq 1 ]; then
+    cat $(qstat -j $1 | grep log | grep std | cut -d ":" -f4)
+  else
+    echo "Usage: qcat <jobid>" >&2
+  fi
+}
