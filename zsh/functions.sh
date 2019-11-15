@@ -32,3 +32,9 @@ qless () {
     echo "Usage: qless <jobid>" >&2
   fi
 }
+
+qdesc () {
+  for job in $(qstat | awk '{print $1}' | tail -n +3); do
+    echo "$job $(qstat -j $job | grep log | grep std | rev | cut -d "/" -f2 | rev)"
+  done
+}

@@ -5,6 +5,7 @@ alias cuda1="export CUDA_VISIBLE_DEVICES=1"
 
 alias rm="rm -i"
 alias rl='readlink -f'
+alias hn='hostname'
 
 # git plugin overrides
 alias gcm="git commit -m"

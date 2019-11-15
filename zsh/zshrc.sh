@@ -22,3 +22,4 @@ source $HOME/dotfiles/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOME/dotfiles/zsh/aliases.sh
 source $HOME/dotfiles/zsh/aliases-sm.sh
 source $HOME/dotfiles/zsh/functions.sh
+source $HOME/dotfiles/zsh/keybindings.sh
