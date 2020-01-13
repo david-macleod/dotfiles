@@ -83,3 +83,8 @@ tb () {
   tmux send -t $session "tblink $@" ENTER
   sleep 3 && tmux capture-pane; tmux show-buffer | grep -v -e '^$'
 }
+
+ediff () {
+  diff -rq $1 $2 |& grep "^Files.*differ$" | fgrep -v ".git" | grep -v pyc | grep -v "No such" | grep -v htmlcov | grep -v cover | grep -v README | grep -v test | grep -v qu | while read line; do f1=$(echo $line | cut -d " " -f2); f2=$(echo $line | cut -d " " -f4); echo $f1 $f2; diff $f1 $f2; done | less
+
+}
