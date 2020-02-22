@@ -8,6 +8,8 @@ alias rl='readlink -f'
 alias hn='hostname'
 
 # git plugin overrides
-alias gcm="git commit -m"
-alias gcom="git checkout master"
-alias gcod="git checkout develop"
+alias gc="git commit -m"
+alias gcm="git checkout master"
+
+
+alias jl="jupyter lab --no-browser --port 8888 --ip $(hostname)"
