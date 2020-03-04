@@ -39,6 +39,14 @@ qdesc () {
   done
 }
 
+ns () {
+  if [ "$#" -eq 1 ]; then
+    ssh $1 'nvidia-smi'
+  else
+    nvidia-smi
+  fi
+}
+
 tblink () {
   if [ "$#" -eq 0 ]; then
     logdir=$(pwd)

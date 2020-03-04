@@ -1,5 +1,4 @@
 #!/bin/zsh
-alias ns="nvidia-smi"
 alias cuda0="export CUDA_VISIBLE_DEVICES=0"
 alias cuda1="export CUDA_VISIBLE_DEVICES=1"
 
