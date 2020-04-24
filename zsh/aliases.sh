@@ -10,6 +10,7 @@ alias pc='python -c'
 # git plugin overrides
 alias gc="git commit -m"
 alias gcm="git checkout master"
+alias grm="git fetch origin master:master && git rebase master"
 
 
 alias jl="jupyter lab --no-browser --port 8888 --ip $(hostname)"
