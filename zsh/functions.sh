@@ -75,22 +75,12 @@ tblink () {
 
   $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir
 }
-  
-tb () {
 
-  session=tb
-  # create tb tmux session if not existing
-  tmux has-session -t $session 2>/dev/null
-  if [ $? != 0 ]; then
-    tmux new -d -s $session
-  else
-    tmux split-window -v -p 90 -t $session
-  fi
-
-  # run tensorboard
-  tmux send -t $session "tblink $@" ENTER
-  sleep 3 && tmux capture-pane; tmux show-buffer | grep -v -e '^$'
-}
+ffprobe-time () {
+  for f in $(cat $1 | awk '{print $1}'); do
+    echo $f $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $f)
+  done
+} 
 
 ediff () {
   diff -rq $1 $2 |& grep "^Files.*differ$" | fgrep -v ".git" | grep -v pyc | grep -v "No such" | grep -v htmlcov | grep -v cover | grep -v README | grep -v test | grep -v qu | while read line; do f1=$(echo $line | cut -d " " -f2); f2=$(echo $line | cut -d " " -f4); echo $f1 $f2; diff $f1 $f2; done | less
