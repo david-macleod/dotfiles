@@ -9,33 +9,46 @@ hi () {
    fi
 }
 
-qcat () {
+qlog () {
   if [ "$#" -eq 1 ]; then
-    cat $(qstat -j $1 | grep log | grep std | cut -d ":" -f4)
+    echo $(qstat -j $1 | grep stdout_path_list | cut -d ":" -f4) 
+  elif [ "$#" -eq 2 ]; then
+    qq_dir=$(qlog $1)
+    echo $(ls ${qq_dir}/*o${1}.${2})
   else
-    echo "Usage: qcat <jobid>" >&2
+    echo "Usage: q<command> <jobid>" >&2
+    echo "Usage: q<command> <array_jobid> <sub_jobid>" >&2
   fi
 }
 
 qtail () {
-  if [ "$#" -eq 1 ]; then
-    tail -f $(qstat -j $1 | grep log | grep std | cut -d ":" -f4)
-  else
-    echo "Usage: qless <jobid>" >&2
-  fi
+  tail -f $(qlog $@)
 }
 
 qless () {
-  if [ "$#" -eq 1 ]; then
-    less $(qstat -j $1 | grep log | grep std | cut -d ":" -f4)
-  else
-    echo "Usage: qless <jobid>" >&2
-  fi
+  less $(qlog $@)
+}
+
+qcat () {
+  cat $(qlog $@)
 }
 
 qdesc () {
-  for job in $(qstat | awk '{print $1}' | tail -n +3); do
-    echo "$job $(qstat -j $job | grep log | grep std | rev | cut -d "/" -f2 | rev)"
+  qstat | tail -n +3 | while read line; do
+    job=$(echo $line | awk '{print $1}')
+    if [ -z "$(qstat -j $job | grep "job-array tasks")" ]; then
+      echo $job $(qlog $job)
+    else
+      qq_dir=$(qlog $job)
+      if [ $(echo $line | awk '{print $5}') = 'r' ]; then
+        sub_job=$(echo $line | awk '{print $10}')
+        qq_dir=$(qlog $job)
+        log_file=$(find ${qq_dir} -name "*o${job}.${sub_job}")
+        echo $job $sub_job $(grep -o -m 1 -E "expdir=[^ ]* "  $log_file | cut -d "=" -f2)
+      else
+        echo $job $qq_dir "qw"
+      fi
+    fi
   done
 }
 
