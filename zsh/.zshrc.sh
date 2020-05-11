@@ -23,3 +23,6 @@ source $HOME/dotfiles/zsh/aliases.sh
 source $HOME/dotfiles/zsh/aliases-sm.sh
 source $HOME/dotfiles/zsh/functions.sh
 source $HOME/dotfiles/zsh/keybindings.sh
+
+# ipdb default debugger
+export PYTHONBREAKPOINT=ipdb.set_trace
