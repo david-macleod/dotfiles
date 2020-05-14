@@ -52,6 +52,11 @@ qdesc () {
   done
 }
 
+
+pmodel () {
+  python -c "import torch; print(torch.load('"$1"', map_location='cpu'))"
+}
+
 ns () {
   if [ "$#" -eq 1 ]; then
     ssh $1 'nvidia-smi'
