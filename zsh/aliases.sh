@@ -14,3 +14,5 @@ alias grm="git fetch origin master:master && git rebase master"
 
 
 alias jl="jupyter lab --no-browser --port 8888 --ip $(hostname)"
+
+alias vsdebug="-m debugpy --listen 5678 --wait-for-client"
