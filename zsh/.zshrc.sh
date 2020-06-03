@@ -26,3 +26,5 @@ source $HOME/dotfiles/zsh/keybindings.sh
 
 # ipdb default debugger
 export PYTHONBREAKPOINT=ipdb.set_trace
+
+export VSDEBUG="-m debugpy --listen 5678 --wait-for-client"
