@@ -54,7 +54,7 @@ qdesc () {
 
 
 pmodel () {
-  python -c "import torch; print(torch.load('"$1"', map_location='cpu'))"
+  python -c "import torch; m = torch.load('"$1"', map_location='cpu'); print(m, end='\n\n'); print(f'Train param count: {sum(x.numel() for x in m.parameters() if x.requires_grad):,}'); print(f'Total param count: {sum(x.numel() for x in m.parameters()):,}')"
 }
 
 ns () {
