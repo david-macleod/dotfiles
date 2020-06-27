@@ -94,6 +94,15 @@ tblink () {
   $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir
 }
 
+tb () {
+  if [ "$#" -eq 0 ]; then
+    logdir=$(pwd)
+  else
+   logdir=$1
+  fi
+  $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir
+}
+
 ffprobe-time () {
   for f in $(cat $1 | awk '{print $1}'); do
     echo $f $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $f)
@@ -103,4 +112,18 @@ ffprobe-time () {
 ediff () {
   diff -rq $1 $2 |& grep "^Files.*differ$" | fgrep -v ".git" | grep -v pyc | grep -v "No such" | grep -v htmlcov | grep -v cover | grep -v README | grep -v test | grep -v qu | while read line; do f1=$(echo $line | cut -d " " -f2); f2=$(echo $line | cut -d " " -f4); echo $f1 $f2; diff $f1 $f2; done | less
 
+}
+
+qp () {
+  if [ "$#" -eq 1 ]; then
+    job_id=$1
+    job_name=$(qstat -j $job_id | grep job_name | awk '{print $2}')
+    if [[ $(qstat -j 35720 | grep job_name | awk '{print $2}') =~ "^P_" ]]; then
+      qalter -N ${job_name#"P_"} $job_id
+    else 
+      qalter -N "P_${job_name}" $job_id 
+    fi
+  else
+	  echo "Usage: qp <jobid>" >&2
+  fi
 }
