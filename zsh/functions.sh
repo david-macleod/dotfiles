@@ -118,12 +118,12 @@ qp () {
   if [ "$#" -eq 1 ]; then
     job_id=$1
     job_name=$(qstat -j $job_id | grep job_name | awk '{print $2}')
-    if [[ $(qstat -j 35720 | grep job_name | awk '{print $2}') =~ "^P_" ]]; then
+    if [[ $(qstat -j $job_id | grep job_name | awk '{print $2}') =~ "^P_" ]]; then
       qalter -N ${job_name#"P_"} $job_id
     else 
       qalter -N "P_${job_name}" $job_id 
     fi
   else
 	  echo "Usage: qp <jobid>" >&2
-  fi
+  fi  
 }
