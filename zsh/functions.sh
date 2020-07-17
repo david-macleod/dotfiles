@@ -127,3 +127,19 @@ qp () {
 	  echo "Usage: qp <jobid>" >&2
   fi  
 }
+
+agl () {
+  for i in "$@"; do
+    lockfile="/tmp/gpu_locks/gpu_$i.lock"
+    echo $$ > "$lockfile";
+    echo "added $lockfile"
+  done
+}
+
+rgl () {
+  for i in "$@"; do
+    lockfile="/tmp/gpu_locks/gpu_$i.lock"
+    rm -f "$lockfile";
+    echo "removed $lockfile"
+  done
+}
