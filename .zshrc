@@ -1,14 +1,64 @@
-#!/bin/zsh
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
-# quickly search command history
-hi () {
-   if [ "$#" -eq 1 ]; then
-	   history | grep "$1"
-   else
-	   echo "Usage: hi <substring>" >&2
-   fi
-}
+# Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
 
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Setup plugins
+plugins=(git gitfast zsh-autosuggestions zsh-syntax-highlighting history-substring-search)
+
+source $ZSH/oh-my-zsh.sh
+
+# p10k theme settings
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# ipdb default debugger
+export PYTHONBREAKPOINT=ipdb.set_trace
+export VSDEBUG="-m debugpy --listen 5678 --wait-for-client"
+
+# -----------------------------------------
+# aliases
+# -----------------------------------------
+alias rm="rm -i"
+alias rl='readlink -f'
+alias hn='hostname'
+alias pc='python -c'
+alias jl="jupyter lab --no-browser --port 8888 --ip $(hostname)"
+
+# git plugin overrides
+alias gc="git commit -m"
+alias gcm="git checkout master"
+alias grm="git fetch origin master:master && git rebase master"
+
+
+# ------------------------------------------
+# speechmatics
+# ------------------------------------------
+alias qq="qstat -f -u '*' | less "
+alias q="qstat -f -u '*' -q 'gpu.q*' | head -n40 | grep -v '\-\-\-\-' | grep -v queuename | grep -v '######' | grep -v '\- PENDING'"
+alias wq="watch 'qstat -f -u '\''*'\'' -q '\''gpu.q*'\'' | head -n40 | grep -v '\''\-\-\-\-'\'' | grep -v queuename | grep -v '\''######'\'' | grep -v '\''\- PENDING'\'"
+alias nsp="ps -up $(nvidia-smi -q -x | grep pid | sed -e 's/<pid>//g' -e 's/<\/pid>//g' -e 's/^[[:space:]]*//')"
+alias ba="ssh bastion.aml.speechmatics.io"
+alias b1="ssh beast1.aml.speechmatics.io"
+alias b2="ssh beast2.aml.speechmatics.io"
+alias b3="ssh beast3.aml.speechmatics.io"
+
+export b1="beast1.aml.speechmatics.io"
+export b2="beast2.aml.speechmatics.io"
+export b3="beast3.aml.speechmatics.io"
+export gb1="gpu.q@${b1}"
+export gb2="gpu.q@${b2}"
+export gb3="gpu.q@${b3}"
+
+# -------------------------------------------
+# functions
+# -------------------------------------------
 qlog () {
   if [ "$#" -eq 1 ]; then
     echo $(qstat -j $1 | grep stdout_path_list | cut -d ":" -f4) 
@@ -51,7 +101,6 @@ qdesc () {
     fi
   done
 }
-
 
 pmodel () {
   python -c "import torch; m = torch.load('"$1"', map_location='cpu'); print(m, end='\n\n'); print(f'Train param count: {sum(x.numel() for x in m.parameters() if x.requires_grad):,}'); print(f'Total param count: {sum(x.numel() for x in m.parameters()):,}')"
