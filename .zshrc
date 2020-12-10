@@ -14,6 +14,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(git gitfast zsh-autosuggestions zsh-syntax-highlighting history-substring-search)
 
 source $ZSH/oh-my-zsh.sh
+ZLE_RPROMPT_INDENT=0
 
 # p10k theme settings
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -21,6 +22,9 @@ source $ZSH/oh-my-zsh.sh
 # ipdb default debugger
 export PYTHONBREAKPOINT=ipdb.set_trace
 export VSDEBUG="-m debugpy --listen 5678 --wait-for-client"
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 # -----------------------------------------
 # aliases
@@ -30,6 +34,10 @@ alias rl='readlink -f'
 alias hn='hostname'
 alias pc='python -c'
 alias jl="jupyter lab --no-browser --port 8888 --ip $(hostname)"
+
+# docker 
+function jonah() { docker exec -it $@ /bin/bash ;}
+alias harpoon='(docker stop $(docker ps -a -q); docker rm -f $(docker ps -a -q))'
 
 # git plugin overrides
 alias gc="git commit -m"
@@ -106,6 +114,8 @@ pmodel () {
   python -c "import torch; m = torch.load('"$1"', map_location='cpu'); print(m, end='\n\n'); print(f'Train param count: {sum(x.numel() for x in m.parameters() if x.requires_grad):,}'); print(f'Total param count: {sum(x.numel() for x in m.parameters()):,}')"
 }
 
+ppath () { tr ':' '\n' <<< "$1" }
+
 ns () {
   if [ "$#" -eq 1 ]; then
     ssh $1 'nvidia-smi'
@@ -149,7 +159,7 @@ tb () {
   else
    logdir=$1
   fi
-  $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir
+  $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir --reload_multifile true
 }
 
 ffprobe-time () {
