@@ -34,6 +34,7 @@ alias rl='readlink -f'
 alias hn='hostname'
 alias pc='python -c'
 alias jl="jupyter lab --no-browser --port 8888 --ip $(hostname)"
+alias ns='nvidia-smi' 
 
 # docker 
 function jonah() { docker exec -it $@ /bin/bash ;}
@@ -116,14 +117,6 @@ pmodel () {
 
 ppath () { tr ':' '\n' <<< "$1" }
 
-ns () {
-  if [ "$#" -eq 1 ]; then
-    ssh $1 'nvidia-smi'
-  else
-    nvidia-smi
-  fi
-}
-
 tblink () {
   if [ "$#" -eq 0 ]; then
     logdir=$(pwd)
@@ -150,7 +143,7 @@ tblink () {
 
   echo "logdir: $logdir"
 
-  $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir
+  $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir --reload_multifile true
 }
 
 tb () {
