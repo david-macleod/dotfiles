@@ -57,13 +57,17 @@ alias ba="ssh bastion.aml.speechmatics.io"
 alias b1="ssh beast1.aml.speechmatics.io"
 alias b2="ssh beast2.aml.speechmatics.io"
 alias b3="ssh beast3.aml.speechmatics.io"
+alias b4="ssh beast4.aml.speechmatics.io"
 
 export b1="beast1.aml.speechmatics.io"
 export b2="beast2.aml.speechmatics.io"
 export b3="beast3.aml.speechmatics.io"
+export b4="beast4.aml.speechmatics.io"
 export gb1="gpu.q@${b1}"
 export gb2="gpu.q@${b2}"
 export gb3="gpu.q@${b3}"
+export gb4="gpu.q@${b4}"
+
 
 # -------------------------------------------
 # functions
