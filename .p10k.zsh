@@ -1505,7 +1505,7 @@
 
   function prompt_singularity() {
     if [ ! -z "$SINGULARITY_CONTAINER" ]; then
-      name=$(echo ${SINGULARITY_CONTAINER} | awk -F/ '{print $(NF-1)}')
+      name=$(echo ${SINGULARITY_CONTAINER} | awk -F/ '{print $(NF-0)}')
       p10k segment -f 031 -i '💫' -t "${name}"
     fi
   }
