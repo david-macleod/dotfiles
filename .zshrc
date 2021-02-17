@@ -146,8 +146,7 @@ tblink () {
   fi
 
   echo "logdir: $logdir"
-
-  $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir --reload_multifile true
+  singularity exec /workspaces/sif/20210213_tensorboard.sif tensorboard --host=$(hostname -f) --logdir=$logdir --reload_multifile true
 }
 
 tb () {
