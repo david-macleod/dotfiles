@@ -219,18 +219,15 @@ qp () {
   fi  
 }
 
-agl () {
-  for i in "$@"; do
-    lockfile="/tmp/gpu_locks/gpu_$i.lock"
-    echo $$ > "$lockfile";
-    echo "added $lockfile"
-  done
-}
-
-rgl () {
-  for i in "$@"; do
-    lockfile="/tmp/gpu_locks/gpu_$i.lock"
-    rm -f "$lockfile";
-    echo "removed $lockfile"
-  done
+cmpgz () {
+  if [ "$#" -eq 2 ]; then
+    TMPFILE1=$(mktemp)
+    TMPFILE2=$(mktemp)
+    gunzip -c $1 > $TMPFILE1
+    gunzip -c $2 > $TMPFILE2
+    cmp $TMPFILE1 $TMPFILE2
+    rm -f $TMPFILE1 $TMPFILE2
+  else
+    echo "Usage: cmpgz <file1.gz> <file2.gz>" >&2
+  fi
 }
