@@ -34,9 +34,9 @@ alias rl='readlink -f'
 alias hn='hostname'
 alias pc='python -c'
 alias jl="jupyter lab --no-browser --port 8888 --ip $(hostname)"
-alias ns='nvidia-smi' 
+alias ns='nvidia-smi'
 
-# docker 
+# docker
 function jonah() { docker exec -it $@ /bin/bash ;}
 alias harpoon='(docker stop $(docker ps -a -q); docker rm -f $(docker ps -a -q))'
 
@@ -51,13 +51,14 @@ alias grm="git fetch origin master:master && git rebase master"
 # ------------------------------------------
 alias qq="qstat -f -u '*' | less "
 alias q="qstat -f -u '*' -q 'gpu.q*' | head -n40 | grep -v '\-\-\-\-' | grep -v queuename | grep -v '######' | grep -v '\- PENDING'"
-alias wq="watch 'qstat -f -u '\''*'\'' -q '\''gpu.q*'\'' | head -n40 | grep -v '\''\-\-\-\-'\'' | grep -v queuename | grep -v '\''######'\'' | grep -v '\''\- PENDING'\'"
+#alias wq="watch 'qstat -f -u '\''*'\'' -q '\''gpu.q*'\'' | head -n40 | grep -v '\''\-\-\-\-'\'' | grep -v queuename | grep -v '\''######'\'' | grep -v '\''\- PENDING'\'"
 alias nsp="ps -up $(nvidia-smi -q -x | grep pid | sed -e 's/<pid>//g' -e 's/<\/pid>//g' -e 's/^[[:space:]]*//')"
 alias ba="ssh bastion.aml.speechmatics.io"
 alias b1="ssh beast1.aml.speechmatics.io"
 alias b2="ssh beast2.aml.speechmatics.io"
 alias b3="ssh beast3.aml.speechmatics.io"
 alias b4="ssh beast4.aml.speechmatics.io"
+alias ms="~/git/hydra/env/singularity.sh -c $SHELL"
 
 export b1="beast1.aml.speechmatics.io"
 export b2="beast2.aml.speechmatics.io"
@@ -110,7 +111,7 @@ extract () {
 
 qlog () {
   if [ "$#" -eq 1 ]; then
-    echo $(qstat -j $1 | grep stdout_path_list | cut -d ":" -f4) 
+    echo $(qstat -j $1 | grep stdout_path_list | cut -d ":" -f4)
   elif [ "$#" -eq 2 ]; then
     qq_dir=$(qlog $1)
     echo $(ls ${qq_dir}/*o${1}.${2})
@@ -164,7 +165,7 @@ tblink () {
   # setup tensorboard directory
     tbdir="$HOME/tb"
     if [ -d "$tbdir" ]; then
-      
+
       last=$(ls -v $tbdir | tail -1)
       new=$((last+1))
       logdir="$tbdir/$new"
@@ -198,7 +199,7 @@ ffprobe-time () {
   for f in $(cat $1 | awk '{print $1}'); do
     echo $f $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $f)
   done
-} 
+}
 
 ediff () {
   diff -rq $1 $2 |& grep "^Files.*differ$" | fgrep -v ".git" | grep -v pyc | grep -v "No such" | grep -v htmlcov | grep -v cover | grep -v README | grep -v test | grep -v qu | while read line; do f1=$(echo $line | cut -d " " -f2); f2=$(echo $line | cut -d " " -f4); echo $f1 $f2; diff $f1 $f2; done | less
@@ -211,12 +212,12 @@ qp () {
     job_name=$(qstat -j $job_id | grep job_name | awk '{print $2}')
     if [[ $(qstat -j $job_id | grep job_name | awk '{print $2}') =~ "^P_" ]]; then
       qalter -N ${job_name#"P_"} $job_id
-    else 
-      qalter -N "P_${job_name}" $job_id 
+    else
+      qalter -N "P_${job_name}" $job_id
     fi
   else
 	  echo "Usage: qp <jobid>" >&2
-  fi  
+  fi
 }
 
 cmpgz () {
