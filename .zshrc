@@ -38,6 +38,7 @@ alias ns='nvidia-smi'
 
 # docker
 function jonah() { docker exec -it $@ /bin/bash ;}
+function run-jonah() { docker run -it --entrypoint /bin/bash $@ ;}
 alias harpoon='(docker stop $(docker ps -a -q); docker rm -f $(docker ps -a -q))'
 
 # git plugin overrides
@@ -45,20 +46,27 @@ alias gc="git commit -m"
 alias gcm="git checkout master"
 alias grm="git fetch origin master:master && git rebase master"
 
+# avoid accidental GPU usage
+if [ -z $CUDA_VISIBLE_DEVICES ]; then
+    export CUDA_VISIBLE_DEVICES=
+fi
+
 
 # ------------------------------------------
 # speechmatics
 # ------------------------------------------
 alias qq="qstat -f -u '*' | less "
-alias q="qstat -f -u '*' -q 'gpu.q*' | head -n40 | grep -v '\-\-\-\-' | grep -v queuename | grep -v '######' | grep -v '\- PENDING'"
+alias gq="qstat -f -u '*' -q aml-gpu.q | less "
+alias q="qstat -f -u '*' -q 'aml-gpu.q*' | head -n40 | grep -v '\-\-\-\-' | grep -v queuename | grep -v '######' | grep -v '\- PENDING'"
 #alias wq="watch 'qstat -f -u '\''*'\'' -q '\''gpu.q*'\'' | head -n40 | grep -v '\''\-\-\-\-'\'' | grep -v queuename | grep -v '\''######'\'' | grep -v '\''\- PENDING'\'"
 alias nsp="ps -up $(nvidia-smi -q -x | grep pid | sed -e 's/<pid>//g' -e 's/<\/pid>//g' -e 's/^[[:space:]]*//')"
-alias ba="ssh bastion.aml.speechmatics.io"
+alias dev="ssh davidma@davidma.dev-vms.speechmatics.io"
 alias b1="ssh beast1.aml.speechmatics.io"
 alias b2="ssh beast2.aml.speechmatics.io"
 alias b3="ssh beast3.aml.speechmatics.io"
 alias b4="ssh beast4.aml.speechmatics.io"
-alias ms="~/git/hydra/env/singularity.sh -c $SHELL"
+alias b5="ssh beast4.aml.speechmatics.io"
+alias ms="~/git/aladdin/env/singularity.sh -c $SHELL"
 
 export b1="beast1.aml.speechmatics.io"
 export b2="beast2.aml.speechmatics.io"
@@ -68,6 +76,9 @@ export gb1="gpu.q@${b1}"
 export gb2="gpu.q@${b2}"
 export gb3="gpu.q@${b3}"
 export gb4="gpu.q@${b4}"
+export gb4="gpu.q@${b5}"
+
+export CI_TOKEN="2914293c68a5626ad2a7040ad95b3d"
 
 
 # -------------------------------------------
@@ -196,9 +207,7 @@ tb () {
 }
 
 ffprobe-time () {
-  for f in $(cat $1 | awk '{print $1}'); do
-    echo $f $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $f)
-  done
+  ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $1
 }
 
 ediff () {
