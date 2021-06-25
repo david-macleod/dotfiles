@@ -65,7 +65,7 @@ alias b1="ssh beast1.aml.speechmatics.io"
 alias b2="ssh beast2.aml.speechmatics.io"
 alias b3="ssh beast3.aml.speechmatics.io"
 alias b4="ssh beast4.aml.speechmatics.io"
-alias b5="ssh beast4.aml.speechmatics.io"
+alias b5="ssh beast5.aml.speechmatics.io"
 alias ms="~/git/aladdin/env/singularity.sh -c $SHELL"
 
 export b1="beast1.aml.speechmatics.io"
@@ -76,7 +76,7 @@ export gb1="gpu.q@${b1}"
 export gb2="gpu.q@${b2}"
 export gb3="gpu.q@${b3}"
 export gb4="gpu.q@${b4}"
-export gb4="gpu.q@${b5}"
+export gb5="gpu.q@${b5}"
 
 export CI_TOKEN="2914293c68a5626ad2a7040ad95b3d"
 
