@@ -58,6 +58,8 @@ fi
 alias qq="qstat -f -u '*' | less "
 alias gq="qstat -f -u '*' -q aml-gpu.q | less "
 alias q="qstat -f -u '*' -q 'aml-gpu.q*' | head -n40 | grep -v '\-\-\-\-' | grep -v queuename | grep -v '######' | grep -v '\- PENDING'"
+function qrecycle() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qrecycle $@" || command qrecycle "$@" ;}
+function qupdate() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qupdate" || command qupdate ;}
 #alias wq="watch 'qstat -f -u '\''*'\'' -q '\''gpu.q*'\'' | head -n40 | grep -v '\''\-\-\-\-'\'' | grep -v queuename | grep -v '\''######'\'' | grep -v '\''\- PENDING'\'"
 alias nsp="ps -up $(nvidia-smi -q -x | grep pid | sed -e 's/<pid>//g' -e 's/<\/pid>//g' -e 's/^[[:space:]]*//')"
 alias dev="ssh davidma@davidma.dev-vms.speechmatics.io"
@@ -78,8 +80,9 @@ export gb3="gpu.q@${b3}"
 export gb4="gpu.q@${b4}"
 export gb5="gpu.q@${b5}"
 
-export CI_TOKEN="2914293c68a5626ad2a7040ad95b3d"
-
+export CI_TOKEN="13324fd2f1d060e58734653dd4e443"
+export ARTIFACTS_TOKEN="AKCp5aTGrR9pu52bWUTBN95D7snbyxoEb4bXwhuCcjTkvXH1xcNNHdnddcj967tq4umZ9oHLv"
+export GITLAB_TOKEN="SQ4jmznyginLBFns5xqv"
 
 # -------------------------------------------
 # functions
@@ -124,8 +127,10 @@ qlog () {
   if [ "$#" -eq 1 ]; then
     echo $(qstat -j $1 | grep stdout_path_list | cut -d ":" -f4)
   elif [ "$#" -eq 2 ]; then
-    qq_dir=$(qlog $1)
-    echo $(ls ${qq_dir}/*o${1}.${2})
+    log_path=$(qlog $1)
+    base_dir=$(echo $log_path | rev | cut -d "/" -f3- | rev)
+    filename=$(basename $log_path)
+    echo ${base_dir}/log/${filename%.log}.${2}.log
   else
     echo "Usage: q<command> <jobid>" >&2
     echo "Usage: q<command> <array_jobid> <sub_jobid>" >&2
@@ -153,9 +158,9 @@ qdesc () {
       qq_dir=$(qlog $job)
       if [ $(echo $line | awk '{print $5}') = 'r' ]; then
         sub_job=$(echo $line | awk '{print $10}')
-        qq_dir=$(qlog $job)
-        log_file=$(find ${qq_dir} -name "*o${job}.${sub_job}")
-        echo $job $sub_job $(grep -o -m 1 -E "expdir=[^ ]* "  $log_file | cut -d "=" -f2)
+        # qq_dir=$(qlog $job)
+        # log_file=$(find ${qq_dir} -name "*o${job}.${sub_job}")
+        echo $job $subjob $(qlog $job $subjob)
       else
         echo $job $qq_dir "qw"
       fi
@@ -194,7 +199,7 @@ tblink () {
   fi
 
   echo "logdir: $logdir"
-  singularity exec /workspaces/sif/20210213_tensorboard.sif tensorboard --host=$(hostname -f) --logdir=$logdir --reload_multifile true
+  singularity exec -B $PWD oras://singularity-master.artifacts.speechmatics.io/tensorboard:2.6.0a20210704 tensorboard --host=$(hostname -f) --logdir=$logdir --reload_multifile true
 }
 
 tb () {
