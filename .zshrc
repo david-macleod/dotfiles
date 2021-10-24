@@ -33,7 +33,7 @@ alias rm="rm -i"
 alias rl='readlink -f'
 alias hn='hostname'
 alias pc='python -c'
-alias jl="jupyter lab --no-browser --port 8888 --ip $(hostname)"
+alias jl="jupyter lab --no-browser --ip $(hostname)"
 alias ns='nvidia-smi'
 
 # docker
@@ -63,22 +63,26 @@ function qupdate() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qupdate" 
 #alias wq="watch 'qstat -f -u '\''*'\'' -q '\''gpu.q*'\'' | head -n40 | grep -v '\''\-\-\-\-'\'' | grep -v queuename | grep -v '\''######'\'' | grep -v '\''\- PENDING'\'"
 alias nsp="ps -up $(nvidia-smi -q -x | grep pid | sed -e 's/<pid>//g' -e 's/<\/pid>//g' -e 's/^[[:space:]]*//')"
 alias dev="ssh davidma@davidma.dev-vms.speechmatics.io"
-alias b1="ssh beast1.aml.speechmatics.io"
-alias b2="ssh beast2.aml.speechmatics.io"
-alias b3="ssh beast3.aml.speechmatics.io"
-alias b4="ssh beast4.aml.speechmatics.io"
-alias b5="ssh beast5.aml.speechmatics.io"
-alias ms="~/git/aladdin/env/singularity.sh -c $SHELL"
 
-export b1="beast1.aml.speechmatics.io"
-export b2="beast2.aml.speechmatics.io"
-export b3="beast3.aml.speechmatics.io"
-export b4="beast4.aml.speechmatics.io"
-export gb1="gpu.q@${b1}"
-export gb2="gpu.q@${b2}"
-export gb3="gpu.q@${b3}"
-export gb4="gpu.q@${b4}"
-export gb5="gpu.q@${b5}"
+alias b1="ssh b1.aml.speechmatics.io"
+alias b2="ssh b2.aml.speechmatics.io"
+alias b3="ssh b3.aml.speechmatics.io"
+alias b4="ssh b4.aml.speechmatics.io"
+alias b5="ssh b5.aml.speechmatics.io"
+
+alias ms1="~/git/aladdin/env/singularity.sh -c $SHELL"
+alias ms2="~/git/aladdin2/env/singularity.sh -c $SHELL"
+alias ms3="~/git/aladdin3/env/singularity.sh -c $SHELL"
+
+alias a1="cd ~/git/aladdin && make shell &> /dev/null"
+alias a2="cd ~/git/aladdin2 && make shell &> /dev/null"
+alias a3="cd ~/git/aladdin3 && make shell &> /dev/null"
+
+export gb1="gpu.q@b1"
+export gb2="gpu.q@b2"
+export gb3="gpu.q@b3"
+export gb4="gpu.q@b4"
+export gb5="gpu.q@b5"
 
 export CI_TOKEN="13324fd2f1d060e58734653dd4e443"
 export ARTIFACTS_TOKEN="AKCp5aTGrR9pu52bWUTBN95D7snbyxoEb4bXwhuCcjTkvXH1xcNNHdnddcj967tq4umZ9oHLv"
