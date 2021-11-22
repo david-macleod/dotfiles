@@ -70,13 +70,14 @@ alias b3="ssh b3.aml.speechmatics.io"
 alias b4="ssh b4.aml.speechmatics.io"
 alias b5="ssh b5.aml.speechmatics.io"
 
+alias ms="make shell"
 alias ms1="~/git/aladdin/env/singularity.sh -c $SHELL"
 alias ms2="~/git/aladdin2/env/singularity.sh -c $SHELL"
 alias ms3="~/git/aladdin3/env/singularity.sh -c $SHELL"
 
-alias a1="cd ~/git/aladdin && make shell &> /dev/null"
-alias a2="cd ~/git/aladdin2 && make shell &> /dev/null"
-alias a3="cd ~/git/aladdin3 && make shell &> /dev/null"
+alias a1="cd ~/git/aladdin && ms"
+alias a2="cd ~/git/aladdin2 && ms"
+alias a3="cd ~/git/aladdin3 && ms"
 
 export gb1="gpu.q@b1"
 export gb2="gpu.q@b2"
@@ -170,6 +171,22 @@ qdesc () {
       fi
     fi
   done
+}
+
+qlogin () {
+  if [ "$#" -eq 1 ]; then
+    /usr/bin/qlogin -now n -pe smp $1 -q aml-gpu.q -l gpu=$1 -N D_$(whoami)
+  elif [ "$#" -eq 2 ]; then
+    if [ "$1" = "cpu" ]; then
+      /usr/bin/qlogin -now n -pe smp $2 -q aml-cpu.q -N D_$(whoami) 
+    else
+    /usr/bin/qlogin -now n -pe smp $1 -q $2 -l gpu=$1 -N D_$(whoami)
+    fi
+  else
+    echo "Usage: qlogin <num_gpus>" >&2
+    echo "Usage: qlogin <num_gpus> <queue>" >&2
+    echo "Usage: qlogin cpu <num_slots>" >&2
+  fi
 }
 
 pmodel () {
