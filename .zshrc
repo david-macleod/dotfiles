@@ -26,6 +26,40 @@ export VSDEBUG="-m debugpy --listen 5678 --wait-for-client"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+# ---------------------------------------------
+# zsh setup
+# -----------------------------------------------
+
+# Experimental (do these actually help?)
+setopt HIST_REDUCE_BLANKS
+setopt HIST_IGNORE_SPACE
+setopt HIST_NO_STORE
+setopt EXTENDED_HISTORY
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS
+setopt completealiases
+setopt always_to_end
+setopt list_ambiguous
+export HISTSIZE=100000 # big big history
+export HISTFILESIZE=100000 # big big history
+
+
+# This speeds up pasting w/ autosuggest
+# https://github.com/zsh-users/zsh-autosuggestions/issues/238
+pasteinit() {
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
+}
+pastefinish() {
+  zle -N self-insert $OLD_SELF_INSERT
+}
+zstyle :bracketed-paste-magic paste-init pasteinit
+zstyle :bracketed-paste-magic paste-finish pastefinish
+
+
+
+
 # -----------------------------------------
 # aliases
 # -----------------------------------------
@@ -57,7 +91,8 @@ fi
 # ------------------------------------------
 alias qq="qstat -f -u '*' | less "
 alias gq="qstat -f -u '*' -q aml-gpu.q | less "
-alias q="qstat -f -u '*' -q 'aml-gpu.q*' | head -n40 | grep -v '\-\-\-\-' | grep -v queuename | grep -v '######' | grep -v '\- PENDING'"
+alias q='qstat'
+alias wq="watch qstat"
 function qrecycle() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qrecycle $@" || command qrecycle "$@" ;}
 function qupdate() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qupdate" || command qupdate ;}
 #alias wq="watch 'qstat -f -u '\''*'\'' -q '\''gpu.q*'\'' | head -n40 | grep -v '\''\-\-\-\-'\'' | grep -v queuename | grep -v '\''######'\'' | grep -v '\''\- PENDING'\'"
@@ -146,6 +181,14 @@ qtail () {
   tail -f $(qlog $@)
 }
 
+qlast () {
+  # Tail the last running job
+  job_id=$(qstat | awk '$5=="r" {print $1}' | grep -E '[0-9]' | sort -r | head -n 1)
+  echo "qtail of most recent job ${job_id}"
+  qtail ${job_id}
+}
+
+
 qless () {
   less $(qlog $@)
 }
@@ -157,17 +200,16 @@ qcat () {
 qdesc () {
   qstat | tail -n +3 | while read line; do
     job=$(echo $line | awk '{print $1}')
-    if [ -z "$(qstat -j $job | grep "job-array tasks")" ]; then
+    if [[ ! $(qstat -j $job | grep "job-array tasks") ]]; then
       echo $job $(qlog $job)
     else
       qq_dir=$(qlog $job)
-      if [ $(echo $line | awk '{print $5}') = 'r' ]; then
+      job_status=$(echo $line | awk '{print $5}')
+      if [ $job_status = 'r' ]; then
         sub_job=$(echo $line | awk '{print $10}')
-        # qq_dir=$(qlog $job)
-        # log_file=$(find ${qq_dir} -name "*o${job}.${sub_job}")
-        echo $job $subjob $(qlog $job $subjob)
+        echo $job $sub_job $(qlog $job $sub_job)
       else
-        echo $job $qq_dir "qw"
+        echo $job $qq_dir $job_status
       fi
     fi
   done
@@ -182,10 +224,13 @@ qlogin () {
     else
     /usr/bin/qlogin -now n -pe smp $1 -q $2 -l gpu=$1 -N D_$(whoami)
     fi
+  elif [ "$#" -eq 3 ]; then
+    /usr/bin/qlogin -now n -pe smp $2 -q $3 -N D_$(whoami)
   else
     echo "Usage: qlogin <num_gpus>" >&2
     echo "Usage: qlogin <num_gpus> <queue>" >&2
     echo "Usage: qlogin cpu <num_slots>" >&2
+    echo "Usage: qlogin cpu <num_slots> <queue>" >&2
   fi
 }
 
@@ -267,3 +312,8 @@ cmpgz () {
     echo "Usage: cmpgz <file1.gz> <file2.gz>" >&2
   fi
 }
+
+
+# -------------------------------------------
+# .zsh extra settings
+# -------------------------------------------
