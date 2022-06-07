@@ -109,12 +109,13 @@ function qrecycle() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qrecycle
 function qupdate() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qupdate" || command qupdate ;}
 alias dev="ssh davidma@davidma.dev-vms.speechmatics.io"
 
-alias b1="ssh b1.aml.speechmatics.io"
-alias b2="ssh b2.aml.speechmatics.io"
-alias b3="ssh b3.aml.speechmatics.io"
-alias b4="ssh b4.aml.speechmatics.io"
-alias b5="ssh b5.aml.speechmatics.io"
-alias b6="ssh b6.aml.speechmatics.io"
+alias b1="ssh gpu001.grid.speechmatics.io"
+alias b2="ssh gpu002.grid.speechmatics.io"
+alias b3="ssh gpu003.grid.speechmatics.io"
+alias b4="ssh gpu004.grid.speechmatics.io"
+alias b5="ssh gpu005.grid.speechmatics.io"
+alias b6="ssh gpu006.grid.speechmatics.io"
+alias b6="ssh gpu007.grid.speechmatics.io"
 
 alias ms="make shell"
 alias ms1="~/git/aladdin/env/singularity.sh -c $SHELL"
@@ -130,6 +131,7 @@ export gb2="gpu.q@b2"
 export gb3="gpu.q@b3"
 export gb4="gpu.q@b4"
 export gb5="gpu.q@b5"
+export gb6="gpu.q@b6"
 export gb6="gpu.q@b6"
 
 export CI_TOKEN="13324fd2f1d060e58734653dd4e443"
