@@ -130,7 +130,7 @@ export gb2="gpu.q@b2"
 export gb3="gpu.q@b3"
 export gb4="gpu.q@b4"
 export gb5="gpu.q@b5"
-export gb5="gpu.q@b6"
+export gb6="gpu.q@b6"
 
 export CI_TOKEN="13324fd2f1d060e58734653dd4e443"
 export ARTIFACTS_TOKEN="AKCp5aTGrR9pu52bWUTBN95D7snbyxoEb4bXwhuCcjTkvXH1xcNNHdnddcj967tq4umZ9oHLv"
