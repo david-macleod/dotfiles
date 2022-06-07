@@ -1,26 +1,52 @@
 #!/bin/bash
 set -euo pipefail
+USAGE=$(cat <<-END
+Usage: ./deploy.sh [OPTION]
+Creates ~/.zshrc and ~/.tmux.conf with location
+specific config
 
-echo "source $HOME/dotfiles/zsh/.zshrc.sh" > $HOME/.zshrc
-echo "source $HOME/dotfiles/tmux/.tmux.conf" > $HOME/.tmux.conf
-# cp -f $HOME/dotfiles/.pdbrc $HOME/.pdbrc
-
-ZSH_CUSTOM=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}
-
-if [[ ! -d ${ZSH_CUSTOM}/themes/powerlevel10k ]]; then
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
-fi
-(
-    cd $ZSH_CUSTOM/themes/powerlevel10k && git pull
+OPTIONS:
+    --local                 deploy local config, only common aliases are sourced
+END
 )
 
-if [[ ! -d ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting ]]; then
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
-fi
+export DOT_DIR=$(dirname $(realpath $0))
 
-if [[ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions ]]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-fi
+LOC="remote"
+while (( "$#" )); do
+    case "$1" in
+        -h|--help)
+            echo "$USAGE" && exit 1 ;;
+        --local)
+            LOC="local" && shift ;;
+        --) # end argument parsing
+            shift && break ;;
+        -*|--*=) # unsupported flags
+            echo "Error: Unsupported flag $1" >&2 && exit 1 ;;
+    esac
+done
 
-find . -maxdepth 1 -name '.*' -type f | xargs -I{} cp -f {} ~/
+
+echo "deploying on $LOC machine..."
+
+# Tmux setup
+echo "source $DOT_DIR/tmux/.tmux.conf" > $HOME/.tmux.conf
+source $DOT_DIR/custom_bins/deploy_bins.sh
+
+# zshrc setup
+echo "source $DOT_DIR/.zshrc" > $HOME/.zshrc
+
+# Gitconfig setup
+source "$DOT_DIR/gitconf/setup_gitconfig.sh"
+
+if [ $LOC == 'local' ]; then
+    # Karabiner elements mapping
+    mkdir -p $HOME/.config/karabiner
+    ln -sf "$DOT_DIR/config/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
+
+    mkdir -p $HOME/.ssh
+    ln -sf "$DOT_DIR/config/ssh_config" "$HOME/.ssh/config"
+
+fi
+# Relaunch zsh
 zsh

@@ -30,14 +30,15 @@ export LANG=en_US.UTF-8
 # zsh setup
 # -----------------------------------------------
 
-# Experimental (do these actually help?)
-setopt HIST_REDUCE_BLANKS
-setopt HIST_IGNORE_SPACE
-setopt HIST_NO_STORE
-setopt EXTENDED_HISTORY
-setopt HIST_SAVE_NO_DUPS
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_FIND_NO_DUPS
+setopt RM_STAR_WAIT               # Wait when typing `rm *` before being able to confirm
+setopt NO_BEEP                    # Don't beep on errors in ZLE
+setopt HIST_REDUCE_BLANKS         # Remove superfluous blanks before recording entry.
+setopt HIST_IGNORE_SPACE          # Don't record an entry starting with a space.
+setopt HIST_NO_STORE              # Remove the history (fc -l) command from the history.
+setopt EXTENDED_HISTORY           # Write the history file in the ":start:elapsed;command" format.
+setopt HIST_SAVE_NO_DUPS          # Don't write duplicate entries in the history file.
+setopt HIST_EXPIRE_DUPS_FIRST     # Expire duplicate entries first when trimming history.
+setopt HIST_FIND_NO_DUPS          # Do not display a line previously found.
 setopt completealiases
 setopt always_to_end
 setopt list_ambiguous
@@ -57,12 +58,23 @@ pastefinish() {
 zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
 
+export LS_COLORS='rs=0:di=01;34:ln=01;35:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=32:st=37;44:ex=00;31:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:';
 
+# ------------------------------------------
+# key bindings
+# -------------------------------------------
 
+bindkey '^P' history-substring-search-up
+bindkey '^N' history-substring-search-down
+
+# Accept zsh autosggestions with ctrl + space
+# Make sure you don't have mac input source switch
+bindkey '^ ' autosuggest-accept
 
 # -----------------------------------------
 # aliases
 # -----------------------------------------
+alias ls='ls -hF --color' # add colors for filetype recognition
 alias rm="rm -i"
 alias rl='readlink -f'
 alias hn='hostname'
@@ -95,8 +107,6 @@ alias q='qstat'
 alias wq="watch qstat"
 function qrecycle() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qrecycle $@" || command qrecycle "$@" ;}
 function qupdate() { [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qupdate" || command qupdate ;}
-#alias wq="watch 'qstat -f -u '\''*'\'' -q '\''gpu.q*'\'' | head -n40 | grep -v '\''\-\-\-\-'\'' | grep -v queuename | grep -v '\''######'\'' | grep -v '\''\- PENDING'\'"
-alias nsp="ps -up $(nvidia-smi -q -x | grep pid | sed -e 's/<pid>//g' -e 's/<\/pid>//g' -e 's/^[[:space:]]*//')"
 alias dev="ssh davidma@davidma.dev-vms.speechmatics.io"
 
 alias b1="ssh b1.aml.speechmatics.io"
@@ -104,6 +114,7 @@ alias b2="ssh b2.aml.speechmatics.io"
 alias b3="ssh b3.aml.speechmatics.io"
 alias b4="ssh b4.aml.speechmatics.io"
 alias b5="ssh b5.aml.speechmatics.io"
+alias b5="ssh b6.aml.speechmatics.io"
 
 alias ms="make shell"
 alias ms1="~/git/aladdin/env/singularity.sh -c $SHELL"
@@ -119,6 +130,7 @@ export gb2="gpu.q@b2"
 export gb3="gpu.q@b3"
 export gb4="gpu.q@b4"
 export gb5="gpu.q@b5"
+export gb5="gpu.q@b6"
 
 export CI_TOKEN="13324fd2f1d060e58734653dd4e443"
 export ARTIFACTS_TOKEN="AKCp5aTGrR9pu52bWUTBN95D7snbyxoEb4bXwhuCcjTkvXH1xcNNHdnddcj967tq4umZ9oHLv"
@@ -234,6 +246,10 @@ qlogin () {
   fi
 }
 
+qrecycle () {
+    [ ! -z $SINGULARITY_CONTAINER ] && ssh localhost "qrecycle $@" || command qrecycle "$@";
+}
+
 pmodel () {
   python -c "import torch; m = torch.load('"$1"', map_location='cpu'); print(m, end='\n\n'); print(f'Train param count: {sum(x.numel() for x in m.parameters() if x.requires_grad):,}'); print(f'Total param count: {sum(x.numel() for x in m.parameters()):,}')"
 }
@@ -268,52 +284,8 @@ tblink () {
   singularity exec -B $PWD oras://singularity-master.artifacts.speechmatics.io/tensorboard:2.6.0a20210704 tensorboard --host=$(hostname -f) --logdir=$logdir --reload_multifile true
 }
 
-tb () {
-  if [ "$#" -eq 0 ]; then
-    logdir=$(pwd)
-  else
-   logdir=$1
-  fi
-  $HOME/venvs/tensorboard/bin/tensorboard --host=$(hostname) --logdir=$logdir --reload_multifile true
-}
-
-ffprobe-time () {
-  ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $1
-}
 
 ediff () {
   diff -rq $1 $2 |& grep "^Files.*differ$" | fgrep -v ".git" | grep -v pyc | grep -v "No such" | grep -v htmlcov | grep -v cover | grep -v README | grep -v test | grep -v qu | while read line; do f1=$(echo $line | cut -d " " -f2); f2=$(echo $line | cut -d " " -f4); echo $f1 $f2; diff $f1 $f2; done | less
 
 }
-
-qp () {
-  if [ "$#" -eq 1 ]; then
-    job_id=$1
-    job_name=$(qstat -j $job_id | grep job_name | awk '{print $2}')
-    if [[ $(qstat -j $job_id | grep job_name | awk '{print $2}') =~ "^P_" ]]; then
-      qalter -N ${job_name#"P_"} $job_id
-    else
-      qalter -N "P_${job_name}" $job_id
-    fi
-  else
-	  echo "Usage: qp <jobid>" >&2
-  fi
-}
-
-cmpgz () {
-  if [ "$#" -eq 2 ]; then
-    TMPFILE1=$(mktemp)
-    TMPFILE2=$(mktemp)
-    gunzip -c $1 > $TMPFILE1
-    gunzip -c $2 > $TMPFILE2
-    cmp $TMPFILE1 $TMPFILE2
-    rm -f $TMPFILE1 $TMPFILE2
-  else
-    echo "Usage: cmpgz <file1.gz> <file2.gz>" >&2
-  fi
-}
-
-
-# -------------------------------------------
-# .zsh extra settings
-# -------------------------------------------
