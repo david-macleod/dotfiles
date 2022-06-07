@@ -114,7 +114,7 @@ alias b2="ssh b2.aml.speechmatics.io"
 alias b3="ssh b3.aml.speechmatics.io"
 alias b4="ssh b4.aml.speechmatics.io"
 alias b5="ssh b5.aml.speechmatics.io"
-alias b5="ssh b6.aml.speechmatics.io"
+alias b6="ssh b6.aml.speechmatics.io"
 
 alias ms="make shell"
 alias ms1="~/git/aladdin/env/singularity.sh -c $SHELL"
@@ -232,7 +232,7 @@ qlogin () {
     /usr/bin/qlogin -now n -pe smp $1 -q aml-gpu.q -l gpu=$1 -N D_$(whoami)
   elif [ "$#" -eq 2 ]; then
     if [ "$1" = "cpu" ]; then
-      /usr/bin/qlogin -now n -pe smp $2 -q aml-cpu.q -N D_$(whoami) 
+      /usr/bin/qlogin -now n -pe smp $2 -q aml-cpu.q -N D_$(whoami)
     else
     /usr/bin/qlogin -now n -pe smp $1 -q $2 -l gpu=$1 -N D_$(whoami)
     fi
