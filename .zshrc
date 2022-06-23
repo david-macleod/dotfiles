@@ -265,8 +265,7 @@ tblink () {
   # setup tensorboard directory
     tbdir="$HOME/tb"
     if [ -d "$tbdir" ]; then
-
-      last=$(ls -v $tbdir | tail -1)
+      last="$(printf '%s\n' $tbdir/* | sed 's/.*\///' | sort -g -r | head -n 1)"
       new=$((last+1))
       logdir="$tbdir/$new"
     else
