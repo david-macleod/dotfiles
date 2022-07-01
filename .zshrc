@@ -23,9 +23,6 @@ ZLE_RPROMPT_INDENT=0
 export PYTHONBREAKPOINT=ipdb.set_trace
 export VSDEBUG="-m debugpy --listen 5678 --wait-for-client"
 
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
 # ---------------------------------------------
 # zsh setup
 # -----------------------------------------------
